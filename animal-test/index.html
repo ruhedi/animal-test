@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>治愈风｜你骨子里最像什么动物？</title>
+    <style>
+        /* 全局治愈风样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", "PingFang SC", sans-serif;
+        }
+        body {
+            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+        /* 标题样式 */
+        .title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #6a994e;
+        }
+        .title h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .title p {
+            font-size: 14px;
+            color: #777;
+        }
+        /* 进度条 */
+        .progress {
+            height: 8px;
+            background: #f1f3f5;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #90a959;
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        /* 题目区域 */
+        .question-container {
+            display: none;
+        }
+        .question-container.active {
+            display: block;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            color: #495057;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .option {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+        .option:hover {
+            background: #f1f7ee;
+        }
+        .option.selected {
+            background: #e8f5e9;
+            border-color: #6a994e;
+            color: #6a994e;
+        }
+        /* 按钮样式 */
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+        .btn-prev {
+            background: #f1f3f5;
+            color: #666;
+        }
+        .btn-next {
+            background: #6a994e;
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+        /* 结果页面 */
+        .result-container {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+        }
+        .result-animal {
+            font-size: 32px;
+            color: #6a994e;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .result-desc {
+            font-size: 16px;
+            line-height: 1.8;
+            color: #495057;
+            margin-bottom: 30px;
+            padding: 0 10px;
+        }
+        .restart-btn {
+            background: #6a994e;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 标题区域 -->
+        <div class="title">
+            <h1>🐾 你骨子里最像什么动物？</h1>
+            <p>治愈系人格测试 · 15题测出真实的你</p>
+        </div>
+        
+        <!-- 进度条 -->
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <!-- 题目区域 -->
+        <div id="questions">
+            <!-- 第1题 -->
+            <div class="question-container active" data-index="0" data-animal="狼,海豚,猫,树懒">
+                <div class="question">1. 遇到麻烦，你第一反应是？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 冷静解决</div>
+                    <div class="option" data-value="1">B 找人帮忙</div>
+                    <div class="option" data-value="2">C 躲起来</div>
+                    <div class="option" data-value="3">D 先摆烂再说</div>
+                </div>
+            </div>
+            
+            <!-- 第2题 -->
+            <div class="question-container" data-index="1" data-animal="鹰,狐狸,孔雀,熊猫">
+                <div class="question">2. 你更喜欢？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 独自待着</div>
+                    <div class="option" data-value="1">B 和好朋友小聚</div>
+                    <div class="option" data-value="2">C 热闹派对</div>
+                    <div class="option" data-value="3">D 宅家不动</div>
+                </div>
+            </div>
+            
+            <!-- 第3题 -->
+            <div class="question-container" data-index="2" data-animal="牛,狗,松鼠,考拉">
+                <div class="question">3. 压力大时你会？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 默默扛</div>
+                    <div class="option" data-value="1">B 倾诉</div>
+                    <div class="option" data-value="2">C 买买买</div>
+                    <div class="option" data-value="3">D 睡一觉</div>
+                </div>
+            </div>
+            
+            <!-- 第4题 -->
+            <div class="question-container" data-index="3" data-animal="猫头鹰,兔子,狮子,羊">
+                <div class="question">4. 你做事风格？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 计划周密</div>
+                    <div class="option" data-value="1">B 随性而为</div>
+                    <div class="option" data-value="2">C 果断直接</div>
+                    <div class="option" data-value="3">D 温柔慢热</div>
+                </div>
+            </div>
+            
+            <!-- 第5题 -->
+            <div class="question-container" data-index="4" data-animal="马,鹿,刺猬,企鹅">
+                <div class="question">5. 社交你是？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 社牛</div>
+                    <div class="option" data-value="1">B 慢热</div>
+                    <div class="option" data-value="2">C 社恐</div>
+                    <div class="option" data-value="3">D 随缘</div>
+                </div>
+            </div>
+            
+            <!-- 第6题 -->
+            <div class="question-container" data-index="5" data-animal="狼,熊,虎,猴子">
+                <div class="question">6. 你更看重？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 自由</div>
+                    <div class="option" data-value="1">B 安全感</div>
+                    <div class="option" data-value="2">C 成就感</div>
+                    <div class="option" data-value="3">D 开心</div>
+                </div>
+            </div>
+            
+            <!-- 第7题 -->
+            <div class="question-container" data-index="6" data-animal="蛇,豹,仓鼠,猪">
+                <div class="question">7. 生气时？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 冷脸</div>
+                    <div class="option" data-value="1">B 爆发</div>
+                    <div class="option" data-value="2">C 委屈</div>
+                    <div class="option" data-value="3">D 无所谓</div>
+                </div>
+            </div>
+            
+            <!-- 第8题 -->
+            <div class="question-container" data-index="7" data-animal="猫,狗,鹰,熊猫">
+                <div class="question">8. 喜欢的环境？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 安静</div>
+                    <div class="option" data-value="1">B 温暖</div>
+                    <div class="option" data-value="2">C 开阔</div>
+                    <div class="option" data-value="3">D 舒适</div>
+                </div>
+            </div>
+            
+            <!-- 第9题 -->
+            <div class="question-container" data-index="8" data-animal="天鹅,蝴蝶,蜗牛,狮子">
+                <div class="question">9. 对爱情？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 专一</div>
+                    <div class="option" data-value="1">B 暧昧</div>
+                    <div class="option" data-value="2">C 被动</div>
+                    <div class="option" data-value="3">D 主动</div>
+                </div>
+            </div>
+            
+            <!-- 第10题 -->
+            <div class="question-container" data-index="9" data-animal="蚂蚁,猫咪,狐狸,树懒">
+                <div class="question">10. 对金钱？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 理性储蓄</div>
+                    <div class="option" data-value="1">B 及时行乐</div>
+                    <div class="option" data-value="2">C 投资</div>
+                    <div class="option" data-value="3">D 无所谓</div>
+                </div>
+            </div>
+            
+            <!-- 第11题 -->
+            <div class="question-container" data-index="10" data-animal="狗,鹦鹉,黑猫,兔子">
+                <div class="question">11. 朋友眼中你？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 靠谱</div>
+                    <div class="option" data-value="1">B 有趣</div>
+                    <div class="option" data-value="2">C 神秘</div>
+                    <div class="option" data-value="3">D 温柔</div>
+                </div>
+            </div>
+            
+            <!-- 第12题 -->
+            <div class="question-container" data-index="11" data-animal="狮子,海豚,狐狸,熊">
+                <div class="question">12. 你更像？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 领导者</div>
+                    <div class="option" data-value="1">B 协调者</div>
+                    <div class="option" data-value="2">C 创造者</div>
+                    <div class="option" data-value="3">D 守护者</div>
+                </div>
+            </div>
+            
+            <!-- 第13题 -->
+            <div class="question-container" data-index="12" data-animal="鹰,鹿,羊,猫">
+                <div class="question">13. 面对选择？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 果断</div>
+                    <div class="option" data-value="1">B 犹豫</div>
+                    <div class="option" data-value="2">C 听建议</div>
+                    <div class="option" data-value="3">D 凭感觉</div>
+                </div>
+            </div>
+            
+            <!-- 第14题 -->
+            <div class="question-container" data-index="13" data-animal="虎,海豚,猴子,黑豹">
+                <div class="question">14. 你的魅力？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 气场</div>
+                    <div class="option" data-value="1">B 温柔</div>
+                    <div class="option" data-value="2">C 幽默</div>
+                    <div class="option" data-value="3">D 神秘</div>
+                </div>
+            </div>
+            
+            <!-- 第15题 -->
+            <div class="question-container" data-index="14" data-animal="狼,熊猫,豹,考拉">
+                <div class="question">15. 理想生活？</div>
+                <div class="options">
+                    <div class="option" data-value="0">A 自由闯荡</div>
+                    <div class="option" data-value="1">B 安稳幸福</div>
+                    <div class="option" data-value="2">C 精彩刺激</div>
+                    <div class="option" data-value="3">D 简单平淡</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 按钮区域 -->
+        <div class="btn-container">
+            <button class="btn btn-prev" id="prevBtn" disabled>上一题</button>
+            <button class="btn btn-next" id="nextBtn">下一题</button>
+        </div>
+        
+        <!-- 结果页面 -->
+        <div class="result-container" id="resultContainer">
+            <h2>你的测试结果来啦 ✨</h2>
+            <div class="result-animal" id="resultAnimal"></div>
+            <div class="result-desc" id="resultDesc"></div>
+            <button class="restart-btn" id="restartBtn">重新测试</button>
+        </div>
+    </div>
+
+    <script>
+        // 核心数据
+        const animalDescriptions = {
+            "狮子": "天生领袖，气场全开，外冷内热",
+            "狼": "独立清醒，目标感强，不爱解释",
+            "猫": "傲娇敏感，只对信任的人温柔",
+            "狗": "忠诚温柔，共情力强，治愈系",
+            "狐狸": "聪明通透，社交高手，懂进退",
+            "熊猫": "佛系躺平，可爱治愈，知足常乐",
+            "鹰": "眼光长远，热爱自由，不喜束缚",
+            "海豚": "温柔善良，高情商，人缘超好",
+            "虎": "霸气果断，敢爱敢恨，不卑不亢",
+            "树懒": "慢热温柔，享受生活，拒绝内耗",
+            "孔雀": "自信耀眼，喜欢被关注，热爱美好",
+            "鹿": "温柔干净，敏感细腻，容易害羞",
+            "熊": "安全感爆棚，护短，默默付出",
+            "蛇": "神秘低调，观察力强，心思细腻",
+            "豹": "效率王者，冷静飒爽，不拖泥带水",
+            "兔子": "软萌温柔，心思单纯，容易满足",
+            "猫头鹰": "心思缜密，冷静理性，洞察力强",
+            "黑豹": "神秘又霸气，外冷内热，自带魅力"
+        };
+
+        // 全局变量
+        let currentQuestionIndex = 0;
+        const totalQuestions = document.querySelectorAll('.question-container').length;
+        let selectedAnswers = {}; // 存储用户选择的答案
+        let animalScores = {}; // 存储各动物的得分
+
+        // 初始化
+        function init() {
+            // 初始化动物得分
+            Object.keys(animalDescriptions).forEach(animal => {
+                animalScores[animal] = 0;
+            });
+            
+            // 绑定选项点击事件
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    // 取消同题其他选项的选中状态
+                    const parentOptions = this.parentElement;
+                    parentOptions.querySelectorAll('.option').forEach(opt => {
+                        opt.classList.remove('selected');
+                    });
+                    // 选中当前选项
+                    this.classList.add('selected');
+                    
+                    // 记录答案
+                    const questionIndex = this.closest('.question-container').dataset.index;
+                    selectedAnswers[questionIndex] = {
+                        value: this.dataset.value,
+                        animal: this.closest('.question-container').dataset.animal.split(',')[this.dataset.value]
+                    };
+                });
+            });
+
+            // 绑定下一题按钮事件
+            document.getElementById('nextBtn').addEventListener('click', goToNextQuestion);
+            
+            // 绑定上一题按钮事件
+            document.getElementById('prevBtn').addEventListener('click', goToPrevQuestion);
+            
+            // 绑定重新测试按钮事件
+            document.getElementById('restartBtn').addEventListener('click', restartTest);
+            
+            // 更新进度条
+            updateProgress();
+        }
+
+        // 跳转到下一题
+        function goToNextQuestion() {
+            // 检查是否选择了选项
+            if (!selectedAnswers[currentQuestionIndex]) {
+                alert("请选择一个选项再继续哦～");
+                return;
+            }
+
+            // 记录当前题的动物得分
+            const currentAnimal = selectedAnswers[currentQuestionIndex].animal;
+            if (animalDescriptions[currentAnimal]) {
+                animalScores[currentAnimal]++;
+            }
+
+            // 隐藏当前题
+            document.querySelectorAll('.question-container')[currentQuestionIndex].classList.remove('active');
+            
+            // 增加索引
+            currentQuestionIndex++;
+            
+            // 检查是否是最后一题
+            if (currentQuestionIndex >= totalQuestions) {
+                showResult();
+                return;
+            }
+            
+            // 显示下一题
+            document.querySelectorAll('.question-container')[currentQuestionIndex].classList.add('active');
+            
+            // 更新按钮状态
+            updateBtnStatus();
+            
+            // 更新进度条
+            updateProgress();
+        }
+
+        // 跳转到上一题
+        function goToPrevQuestion() {
+            // 隐藏当前题
+            document.querySelectorAll('.question-container')[currentQuestionIndex].classList.remove('active');
+            
+            // 减少索引
+            currentQuestionIndex--;
+            
+            // 显示上一题
+            document.querySelectorAll('.question-container')[currentQuestionIndex].classList.add('active');
+            
+            // 恢复选中状态
+            if (selectedAnswers[currentQuestionIndex]) {
+                const questionContainer = document.querySelectorAll('.question-container')[currentQuestionIndex];
+                const options = questionContainer.querySelectorAll('.option');
+                options.forEach(opt => {
+                    if (opt.dataset.value === selectedAnswers[currentQuestionIndex].value) {
+                        opt.classList.add('selected');
+                    } else {
+                        opt.classList.remove('selected');
+                    }
+                });
+            }
+            
+            // 更新按钮状态
+            updateBtnStatus();
+            
+            // 更新进度条
+            updateProgress();
+        }
+
+        // 更新按钮状态
+        function updateBtnStatus() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // 上一题按钮
+            if (currentQuestionIndex === 0) {
+                prevBtn.disabled = true;
+            } else {
+                prevBtn.disabled = false;
+            }
+            
+            // 下一题按钮文字
+            if (currentQuestionIndex === totalQuestions - 1) {
+                nextBtn.textContent = "查看结果";
+            } else {
+                nextBtn.textContent = "下一题";
+            }
+        }
+
+        // 更新进度条
+        function updateProgress() {
+            const progress = (currentQuestionIndex / totalQuestions) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+        }
+
+        // 显示结果
+        function showResult() {
+            // 隐藏题目和按钮
+            document.getElementById('questions').style.display = 'none';
+            document.querySelector('.btn-container').style.display = 'none';
+            
+            // 显示结果区域
+            document.getElementById('resultContainer').style.display = 'block';
+            
+            // 计算得分最高的动物
+            let maxScore = 0;
+            let resultAnimal = "熊猫"; // 默认值
+            Object.keys(animalScores).forEach(animal => {
+                if (animalScores[animal] > maxScore) {
+                    maxScore = animalScores[animal];
+                    resultAnimal = animal;
+                }
+            });
+            
+            // 显示结果
+            document.getElementById('resultAnimal').textContent = `你最像 → ${resultAnimal} 🐾`;
+            document.getElementById('resultDesc').textContent = animalDescriptions[resultAnimal];
+        }
+
+        // 重新测试
+        function restartTest() {
+            // 重置变量
+            currentQuestionIndex = 0;
+            selectedAnswers = {};
+            animalScores = {};
+            
+            // 初始化动物得分
+            Object.keys(animalDescriptions).forEach(animal => {
+                animalScores[animal] = 0;
+            });
+            
+            // 隐藏结果，显示题目和按钮
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('questions').style.display = 'block';
+            document.querySelector('.btn-container').style.display = 'flex';
+            
+            // 重置所有题目状态
+            document.querySelectorAll('.question-container').forEach((q, index) => {
+                q.classList.remove('active');
+                q.querySelectorAll('.option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                if (index === 0) {
+                    q.classList.add('active');
+                }
+            });
+            
+            // 更新按钮和进度条
+            updateBtnStatus();
+            updateProgress();
+        }
+
+        // 初始化执行
+        init();
+    </script>
+</body>
+</html>
